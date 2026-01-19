@@ -1,0 +1,170 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "YAVA Intent Classifier",
+    "description": "Healthcare intent classification using RAG+LLM. Classifies user utterances into 47 healthcare-related intents and routes to appropriate agents.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://yava-intent-classifier.onrender.com",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/classify": {
+      "post": {
+        "operationId": "classifyIntent",
+        "summary": "Classify user intent",
+        "description": "Classify a user message into one of 47 healthcare intents using RAG+LLM. Returns intent name, target agent, confidence score, and whether clarification is needed.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassifyRequest"
+              },
+              "example": {
+                "user_input": "I need to refill my prescription",
+                "conversation_id": "session-123",
+                "member_id": "member-456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Classification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassifyResponse"
+                },
+                "example": {
+                  "intent": "pharmacy",
+                  "agent": "PharmacyAgent",
+                  "confidence": 1.0,
+                  "needs_clarification": false,
+                  "metadata": {
+                    "intent_id": "INT-PHR-0001",
+                    "category": "healthcare",
+                    "processing_time_ms": 2.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/intents": {
+      "get": {
+        "operationId": "listIntents",
+        "summary": "List all intents",
+        "description": "List all 47 available healthcare intents with their metadata including intent_id, intent_name, category, and agent_routing.",
+        "responses": {
+          "200": {
+            "description": "List of intents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntentsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "healthCheck",
+        "summary": "Health check",
+        "description": "Check API health status",
+        "responses": {
+          "200": {
+            "description": "Health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClassifyRequest": {
+        "type": "object",
+        "required": ["user_input"],
+        "properties": {
+          "user_input": {
+            "type": "string",
+            "description": "The user's natural language message to classify"
+          },
+          "conversation_id": {
+            "type": "string",
+            "description": "Conversation session ID for context tracking"
+          },
+          "member_id": {
+            "type": "string",
+            "description": "Member identifier for personalization"
+          }
+        }
+      },
+      "ClassifyResponse": {
+        "type": "object",
+        "properties": {
+          "intent": {
+            "type": "string",
+            "description": "Detected intent name (e.g., pharmacy, claims, eligibility)"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Target agent for routing (e.g., PharmacyAgent, ClaimsAgent)"
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Classification confidence score (0-1)"
+          },
+          "needs_clarification": {
+            "type": "boolean",
+            "description": "Whether disambiguation is needed (confidence < 0.75)"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "intent_id": {"type": "string"},
+              "category": {"type": "string"},
+              "processing_time_ms": {"type": "number"}
+            }
+          }
+        }
+      },
+      "IntentsResponse": {
+        "type": "object",
+        "properties": {
+          "intents": {
+            "type": "array",
+            "items": {"type": "object"}
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {"type": "string"},
+          "service": {"type": "string"},
+          "version": {"type": "string"}
+        }
+      }
+    }
+  }
+}
