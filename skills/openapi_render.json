@@ -108,10 +108,12 @@
           },
           "conversation_id": {
             "type": "string",
+            "nullable": true,
             "description": "Conversation session ID for context tracking"
           },
           "member_id": {
             "type": "string",
+            "nullable": true,
             "description": "Member identifier for personalization"
           }
         }
