@@ -3,12 +3,22 @@ YAVA Intent Classifier - REST API
 Deploy as a skill for Watson Orchestrate
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Dict, List
 import uvicorn
 import os
+import logging
+from datetime import datetime
+from collections import deque
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Track recent API calls (in-memory, last 100)
+api_call_log = deque(maxlen=100)
 
 # Import classifier
 import sys
@@ -55,16 +65,36 @@ class HealthResponse(BaseModel):
 
 
 @app.post("/classify", response_model=ClassifyResponse, summary="Classify user intent")
-async def classify_intent(request: ClassifyRequest):
+async def classify_intent(request: ClassifyRequest, req: Request):
     """
     Classify a user message into one of 47 healthcare intents.
     
     Returns the detected intent, target agent for routing, and confidence score.
     """
     try:
+        # Log the API call
+        call_info = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "input": request.user_input,
+            "conversation_id": request.conversation_id,
+            "member_id": request.member_id,
+            "source_ip": req.client.host if req.client else "unknown",
+            "user_agent": req.headers.get("user-agent", "unknown")
+        }
+        logger.info(f"🎯 CLASSIFIER CALLED: {call_info}")
+        
         classifier = get_classifier()
         session_id = request.conversation_id or f"api-{request.member_id}" or "default"
         result = classifier.classify(request.user_input, session_id)
+        
+        # Log result
+        call_info["result"] = {
+            "intent": result["intent"],
+            "confidence": result["confidence"],
+            "agent": result["agent_routing"]
+        }
+        api_call_log.append(call_info)
+        logger.info(f"✅ RESULT: {result['intent']} ({result['confidence']*100:.0f}%)")
         
         return ClassifyResponse(
             intent=result["intent"],
@@ -100,6 +130,18 @@ async def health_check():
         service="yava-intent-classifier",
         version="1.0.0"
     )
+
+
+@app.get("/logs", summary="View recent API calls")
+async def get_logs():
+    """
+    View recent classifier API calls to verify the tool is being used.
+    Returns the last 100 classification requests.
+    """
+    return {
+        "total_calls": len(api_call_log),
+        "recent_calls": list(api_call_log)
+    }
 
 
 @app.get("/", summary="Root endpoint")
