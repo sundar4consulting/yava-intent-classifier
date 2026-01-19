@@ -1,0 +1,137 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "YAVA Intent Classifier",
+        "description": "Local RAG+LLM intent classification for YAVA healthcare assistant. Classifies user utterances into 47 healthcare-related intents and routes to appropriate agents.",
+        "version": "1.0.0",
+        "x-ibm-application-name": "YAVA Intent Classifier",
+        "x-ibm-application-id": "yava-intent-classifier"
+    },
+    "x-ibm-skill-type": "imported",
+    "x-ibm-application-icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='#1565C0'/><text x='16' y='21' text-anchor='middle' fill='white' font-size='14' font-weight='bold'>Y</text></svg>",
+    "servers": [
+        {
+            "url": "."
+        }
+    ],
+    "paths": {
+        "/classify": {
+            "post": {
+                "operationId": "classifyIntent",
+                "summary": "Classify user utterance to healthcare intent",
+                "description": "Uses RAG+LLM to classify user messages into specific healthcare intents (pharmacy, claims, eligibility, etc.) and determines the appropriate agent for routing.",
+                "x-]]]ibm-nl-intent-examples": [
+                    "classify this message",
+                    "what intent is this",
+                    "determine the intent",
+                    "route this request",
+                    "what does the user want"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["user_input"],
+                                "properties": {
+                                    "user_input": {
+                                        "type": "string",
+                                        "description": "The user's natural language message to classify",
+                                        "x-]]]ibm-label": "User Message"
+                                    },
+                                    "conversation_id": {
+                                        "type": "string",
+                                        "description": "Conversation session ID for context",
+                                        "x-]]]ibm-label": "Conversation ID"
+                                    },
+                                    "member_id": {
+                                        "type": "string",
+                                        "description": "Member identifier for personalization",
+                                        "x-]]]ibm-label": "Member ID"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Intent classification result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "intent": {
+                                            "type": "string",
+                                            "description": "Detected intent name (e.g., pharmacy, claims, eligibility)"
+                                        },
+                                        "agent": {
+                                            "type": "string",
+                                            "description": "Target agent for routing (e.g., PharmacyAgent, ClaimsAgent)"
+                                        },
+                                        "confidence": {
+                                            "type": "number",
+                                            "description": "Classification confidence score (0-1)"
+                                        },
+                                        "needs_clarification": {
+                                            "type": "boolean",
+                                            "description": "Whether disambiguation is needed (confidence < 0.75)"
+                                        },
+                                        "metadata": {
+                                            "type": "object",
+                                            "properties": {
+                                                "intent_id": {"type": "string"},
+                                                "category": {"type": "string"},
+                                                "processing_time_ms": {"type": "number"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/intents": {
+            "get": {
+                "operationId": "getIntents",
+                "summary": "List all available intents",
+                "description": "Returns the complete list of 47 healthcare intents supported by the classifier.",
+                "responses": {
+                    "200": {
+                        "description": "List of intents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "intents": {
+                                            "type": "array",
+                                            "items": {"type": "object"}
+                                        },
+                                        "count": {"type": "integer"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "operationId": "healthCheck",
+                "summary": "Health check",
+                "description": "Returns service health status.",
+                "responses": {
+                    "200": {
+                        "description": "Health status"
+                    }
+                }
+            }
+        }
+    }
+}

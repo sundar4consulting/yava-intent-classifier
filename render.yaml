@@ -1,0 +1,16 @@
+# Render Blueprint - Deploy YAVA Intent Classifier
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: yava-intent-classifier
+    runtime: python
+    region: oregon  # or ohio, frankfurt, singapore
+    plan: free      # free, starter, standard, pro
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+    healthCheckPath: /health
+    autoDeploy: true
