@@ -25,9 +25,7 @@
                 "$ref": "#/components/schemas/ClassifyRequest"
               },
               "example": {
-                "user_input": "I need to refill my prescription",
-                "conversation_id": "session-123",
-                "member_id": "member-456"
+                "user_input": "I need to refill my prescription"
               }
             }
           }
@@ -105,16 +103,6 @@
           "user_input": {
             "type": "string",
             "description": "The user's natural language message to classify"
-          },
-          "conversation_id": {
-            "type": "string",
-            "nullable": true,
-            "description": "Conversation session ID for context tracking"
-          },
-          "member_id": {
-            "type": "string",
-            "nullable": true,
-            "description": "Member identifier for personalization"
           }
         }
       },
