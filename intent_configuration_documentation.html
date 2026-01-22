@@ -58,6 +58,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            table-layout: fixed;
         }
         
         th {
@@ -69,12 +70,16 @@
             text-transform: uppercase;
             font-size: 0.9em;
             letter-spacing: 0.5px;
+            word-wrap: break-word;
+            vertical-align: top;
         }
         
         td {
             border: 1px solid #ecf0f1;
             padding: 12px 15px;
             transition: background-color 0.3s ease;
+            word-wrap: break-word;
+            vertical-align: top;
         }
         
         tr:nth-child(even) {
@@ -478,6 +483,165 @@
             </tr>
         </tbody>
     </table>
+
+    <h2>Detailed Attribute Explanations</h2>
+
+    <p>This section provides detailed explanations of each attribute, including how they affect system behavior, examples, and best practices.</p>
+
+    <h3>Priority (1-5)</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Indicates the importance level of the intent, where 5 is the highest priority and 1 is the lowest.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Routing Priority:</strong> Higher priority intents are routed first when multiple intents match with similar confidence scores.</li>
+            <li><strong>Confidence Threshold:</strong> Priority 4-5 intents use a lower confidence threshold (0.7) for automatic routing, while priority 1-3 require higher confidence (0.85) to avoid false positives.</li>
+            <li><strong>Disambiguation Trigger:</strong> Lower priority intents trigger disambiguation more easily when confidence is borderline.</li>
+            <li><strong>Agent Escalation:</strong> Priority 5 intents may escalate to human agents if classification confidence drops below 0.6, while priority 1 intents allow lower confidence acceptance.</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>Priority 5:</strong> "emergency_medical" - Immediate routing required, low tolerance for misclassification</li>
+            <li><strong>Priority 4:</strong> "pharmacy_refill" - Important but not urgent, standard confidence thresholds</li>
+            <li><strong>Priority 3:</strong> "general_inquiry" - Routine questions, higher tolerance for clarification</li>
+            <li><strong>Priority 2:</strong> "wellness_tips" - Informational, can accept lower confidence</li>
+            <li><strong>Priority 1:</strong> "casual_chat" - Fallback intent, very permissive matching</li>
+        </ul>
+    </div>
+
+    <h3>Category</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Groups related intents for organizational and analytical purposes.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Analytics Grouping:</strong> Categories enable reporting and performance analysis by intent type.</li>
+            <li><strong>Agent Specialization:</strong> Some agents may specialize in specific categories (e.g., "claims" vs "benefits").</li>
+            <li><strong>Training Optimization:</strong> Category-based training helps the model learn domain-specific patterns.</li>
+            <li><strong>Business Rules:</strong> Categories can trigger different business logic or compliance requirements.</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>healthcare:</strong> Medical appointments, prescriptions, health records</li>
+            <li><strong>claims:</strong> Filing claims, claim status, appeals</li>
+            <li><strong>benefits:</strong> Coverage details, plan information, enrollment</li>
+            <li><strong>billing:</strong> Payments, statements, premium questions</li>
+            <li><strong>wellness:</strong> Fitness programs, health tips, preventive care</li>
+        </ul>
+    </div>
+
+    <h3>Agent Routing</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Specifies which specialized agent should handle the intent.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Agent Selection:</strong> Determines which agent receives the conversation after classification.</li>
+            <li><strong>Context Transfer:</strong> Relevant conversation history and user data are passed to the routed agent.</li>
+            <li><strong>Skill Activation:</strong> Different agents have different tools and capabilities based on their specialization.</li>
+            <li><strong>Fallback Handling:</strong> If the specified agent is unavailable, the system may route to a general agent.</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>PharmacyAgent:</strong> Handles prescription refills, medication questions, pharmacy locations</li>
+            <li><strong>ClaimsAgent:</strong> Processes claim filings, status checks, appeal assistance</li>
+            <li><strong>BenefitsAgent:</strong> Explains coverage, answers plan questions, handles enrollment</li>
+            <li><strong>WellnessAgent:</strong> Provides fitness advice, wellness program information</li>
+        </ul>
+    </div>
+
+    <h3>Description Short</h3>
+    <div class="example">
+        <p><strong>Description:</strong> A brief, human-readable summary of what the intent handles.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Documentation:</strong> Used in admin interfaces and reporting for intent identification.</li>
+            <li><strong>Debugging:</strong> Helps developers understand intent purpose during troubleshooting.</li>
+            <li><strong>Analytics:</strong> Provides context for performance metrics and user interaction analysis.</li>
+            <li><strong>Training:</strong> Guides the creation of appropriate training utterances and keywords.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Keep under 100 characters</li>
+            <li>Use action-oriented language (e.g., "Handle pharmacy inquiries" vs "Pharmacy stuff")</li>
+            <li>Include key outcomes (e.g., "Process prescription refills" vs "Prescription questions")</li>
+        </ul>
+    </div>
+
+    <h3>Disambiguation Prompt</h3>
+    <div class="example">
+        <p><strong>Description:</strong> A question or set of options presented to users when the system has low confidence in intent classification.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Confidence Threshold:</strong> Triggers when classification confidence falls below 0.75 for priority intents or 0.8 for lower priority ones.</li>
+            <li><strong>User Experience:</strong> Provides clear options instead of guessing, improving accuracy and user satisfaction.</li>
+            <li><strong>Conversation Flow:</strong> Pauses automated routing and waits for user clarification before proceeding.</li>
+            <li><strong>Analytics Tracking:</strong> Disambiguation events are logged for model improvement and intent refinement.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Present 2-4 clear options when possible</li>
+            <li>Use conversational language</li>
+            <li>Avoid technical jargon</li>
+            <li>Test prompts with actual users for clarity</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>Good:</strong> "Are you looking to: 1) Refill a prescription, 2) Find a pharmacy location, or 3) Check medication costs?"</li>
+            <li><strong>Poor:</strong> "Please clarify your pharmacy-related question."</li>
+        </ul>
+    </div>
+
+    <h3>Training Utterances</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Sample user messages that should trigger this intent, used to train the classification model.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Model Training:</strong> Directly influences how the AI learns to recognize intent patterns.</li>
+            <li><strong>Confidence Scoring:</strong> More diverse utterances improve classification accuracy and confidence scores.</li>
+            <li><strong>Edge Case Handling:</strong> Varied examples help the model handle different phrasings and contexts.</li>
+            <li><strong>Performance Metrics:</strong> Quality and quantity of utterances affect precision, recall, and F1 scores.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Provide 10+ diverse examples per intent</li>
+            <li>Include variations in length, formality, and wording</li>
+            <li>Cover both direct and indirect ways users might express the intent</li>
+            <li>Include common misspellings or abbreviations</li>
+            <li>Avoid duplicate or very similar phrases</li>
+        </ul>
+        <p><strong>Examples for "pharmacy" intent:</strong></p>
+        <ul>
+            <li>"I need to refill my prescription"</li>
+            <li>"Where can I pick up my meds?"</li>
+            <li>"How much does my prescription cost?"</li>
+            <li>"Find the closest pharmacy"</li>
+            <li>"I ran out of my medication"</li>
+        </ul>
+    </div>
+
+    <h3>Keywords</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Important terms that strongly indicate this intent, used to boost matching confidence.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Matching Boost:</strong> Presence of keywords increases classification confidence by 10-20%.</li>
+            <li><strong>Feature Engineering:</strong> Keywords are used as features in the classification algorithm.</li>
+            <li><strong>Search Optimization:</strong> Keywords help in semantic search and vector similarity calculations.</li>
+            <li><strong>Intent Discrimination:</strong> Helps distinguish between similar intents (e.g., "prescription" vs "appointment").</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Include 3-8 key terms per intent</li>
+            <li>Add synonyms and variations (e.g., "prescription", "rx", "medication")</li>
+            <li>Focus on domain-specific terminology</li>
+            <li>Include common misspellings if relevant</li>
+            <li>Update based on user interaction analysis</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>Pharmacy:</strong> prescription, refill, medication, pharmacy, rx, meds</li>
+            <li><strong>Claims:</strong> claim, reimbursement, payment, coverage, filed, status</li>
+            <li><strong>Benefits:</strong> coverage, plan, benefits, deductible, copay, premium</li>
+        </ul>
+    </div>
 
     <h2>Complete Example: Adding a New Intent</h2>
 
