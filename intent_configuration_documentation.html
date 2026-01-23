@@ -643,6 +643,112 @@
         </ul>
     </div>
 
+    <h3>Intent ID</h3>
+    <div class="example">
+        <p><strong>Description:</strong> A unique identifier for each intent following a standardized naming convention.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>System Identification:</strong> Used internally by the system to reference and manage intents uniquely.</li>
+            <li><strong>API Endpoints:</strong> Serves as the primary key for intent-related API operations and database lookups.</li>
+            <li><strong>Version Control:</strong> Enables tracking of intent changes and maintaining audit trails.</li>
+            <li><strong>Integration:</strong> Facilitates integration with external systems that reference intents by ID.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Use format: INT-CATEGORY-NNNN (e.g., INT-PHR-0001, INT-CLM-0047)</li>
+            <li>CATEGORY should be a 3-letter abbreviation (PHR=Pharmacy, CLM=Claims, BEN=Benefits, etc.)</li>
+            <li>Increment numbers sequentially within each category</li>
+            <li>Never reuse IDs, even for deleted intents</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>INT-PHR-0001:</strong> pharmacy - First pharmacy-related intent</li>
+            <li><strong>INT-CLM-0047:</strong> claims_status - 47th claims-related intent</li>
+            <li><strong>INT-BEN-0023:</strong> benefits_enrollment - 23rd benefits-related intent</li>
+        </ul>
+    </div>
+
+    <h3>Intent Name</h3>
+    <div class="example">
+        <p><strong>Description:</strong> A human-readable, machine-friendly name for the intent used in code and APIs.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>API Responses:</strong> Returned in classification results and used by downstream systems.</li>
+            <li><strong>Agent Logic:</strong> Used by agents to determine which tools and responses to activate.</li>
+            <li><strong>Analytics:</strong> Appears in reports and dashboards for intent performance tracking.</li>
+            <li><strong>Configuration:</strong> Referenced in agent routing rules and business logic.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Use camelCase or snake_case (e.g., pharmacyRefill, claims_status)</li>
+            <li>Keep names descriptive but concise (under 30 characters)</li>
+            <li>Avoid spaces and special characters except underscores</li>
+            <li>Make names unique across all intents</li>
+            <li>Use consistent naming patterns within categories</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>pharmacy:</strong> General pharmacy inquiries</li>
+            <li><strong>prescription_refill:</strong> Specific prescription refill requests</li>
+            <li><strong>claims_status:</strong> Checking claim processing status</li>
+            <li><strong>benefits_summary:</strong> Requesting benefits overview</li>
+        </ul>
+    </div>
+
+    <h3>Use Cases</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Describes the specific scenarios and situations when this intent should be triggered.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Training Guidance:</strong> Helps create more targeted training utterances and keywords.</li>
+            <li><strong>Validation:</strong> Used during intent review to ensure coverage of intended scenarios.</li>
+            <li><strong>Documentation:</strong> Provides context for business users and developers about intent scope.</li>
+            <li><strong>Testing:</strong> Guides the creation of test cases to validate intent performance.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Be specific about user scenarios and contexts</li>
+            <li>Include both common and edge cases</li>
+            <li>Use action-oriented descriptions</li>
+            <li>Consider user intent rather than just keywords</li>
+            <li>Keep under 200 characters for readability</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>Pharmacy:</strong> "When users need prescription refills, pharmacy locations, or medication information"</li>
+            <li><strong>Claims:</strong> "When users want to file new claims, check claim status, or appeal denied claims"</li>
+            <li><strong>Benefits:</strong> "When users inquire about coverage details, plan information, or enrollment processes"</li>
+            <li><strong>Emergency:</strong> "When users report urgent medical situations requiring immediate assistance"</li>
+        </ul>
+    </div>
+
+    <h3>Expected Outcomes</h3>
+    <div class="example">
+        <p><strong>Description:</strong> Defines what the system should accomplish when this intent is correctly identified.</p>
+        <p><strong>Behavior Changes:</strong></p>
+        <ul>
+            <li><strong>Agent Behavior:</strong> Guides the specific actions and responses the routed agent should provide.</li>
+            <li><strong>Success Metrics:</strong> Defines what constitutes successful intent handling for analytics.</li>
+            <li><strong>Quality Assurance:</strong> Used to evaluate whether the intent was handled appropriately.</li>
+            <li><strong>Process Flow:</strong> Helps design the conversation flow and escalation paths.</li>
+        </ul>
+        <p><strong>Best Practices:</strong></p>
+        <ul>
+            <li>Focus on user outcomes, not just system actions</li>
+            <li>Be specific about deliverables or resolutions</li>
+            <li>Include escalation paths for complex cases</li>
+            <li>Consider both automated and human-assisted outcomes</li>
+            <li>Align with business objectives and user needs</li>
+        </ul>
+        <p><strong>Examples:</strong></p>
+        <ul>
+            <li><strong>Pharmacy:</strong> "User receives prescription refill confirmation and pickup instructions"</li>
+            <li><strong>Claims:</strong> "User gets claim status update and next steps for processing"</li>
+            <li><strong>Benefits:</strong> "User receives personalized benefits summary and coverage details"</li>
+            <li><strong>Emergency:</strong> "User is immediately connected to emergency services or medical professionals"</li>
+        </ul>
+    </div>
+
     <h2>Complete Example: Adding a New Intent</h2>
 
     <h3>1. Excel Template Entry</h3>
