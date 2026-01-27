@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAVA Intent Classifier V2 - Skill, Tool & Agent Reference</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 40px; 
+            text-align: center;
+        }
+        header h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        header .subtitle { 
+            font-size: 1.1rem; 
+            opacity: 0.95;
+        }
+        nav { 
+            background: #34495e; 
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav a { 
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            display: inline-block;
+        }
+        nav a:hover { background: #667eea; }
+        .content { padding: 40px; }
+        section { margin-bottom: 50px; }
+        h2 { 
+            color: #667eea; 
+            border-left: 5px solid #764ba2;
+            padding-left: 15px;
+            margin: 30px 0 20px 0;
+            font-size: 2rem;
+        }
+        h3 { 
+            color: #34495e; 
+            margin: 25px 0 15px 0;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        h4 { 
+            color: #555; 
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+        .code-block { 
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .code-block .keyword { color: #ff7675; font-weight: bold; }
+        .code-block .string { color: #55efc4; }
+        .code-block .comment { color: #74b9ff; font-style: italic; }
+        .code-block .function { color: #ffeaa7; }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        th { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 15px; 
+            text-align: left;
+            font-weight: 600;
+        }
+        td { 
+            padding: 12px 15px; 
+            border-bottom: 1px solid #ecf0f1;
+        }
+        tr:nth-child(even) { background: #f8f9fa; }
+        tr:hover { background: #e3f2fd; transition: background 0.3s; }
+        .alert { 
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .alert.info { background: #d1ecf1; border-color: #17a2b8; }
+        .alert.success { background: #d4edda; border-color: #28a745; }
+        .alert.warning { background: #fff3cd; border-color: #ffc107; }
+        .component-card {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 5px 5px 5px 0;
+        }
+        .tag.skill { background: #f38181; }
+        .tag.tool { background: #4ecdc4; }
+        .tag.agent { background: #aa96da; }
+        .tag.api { background: #95e1d3; }
+        ul, ol { margin: 15px 0 15px 30px; }
+        li { margin: 8px 0; }
+        strong { color: #2c3e50; }
+        .architecture-diagram {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .flow-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .decision-box { 
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe0b3 100%);
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .benefit-box { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        pre {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        code {
+            background: #ecf0f1;
+            color: #c0392b;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .command-box {
+            background: #2d3436;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 YAVA Intent Classifier V2</h1>
+            <div class="subtitle">
+                Skill, Tool & Agent Reference Guide<br>
+                <strong>Complete deployment documentation for Watson Orchestrate integration</strong>
+            </div>
+            <div style="margin-top: 15px;">
+                <span class="tag skill">Skill</span>
+                <span class="tag tool">Tool</span>
+                <span class="tag agent">Agent</span>
+                <span class="tag api">REST API</span>
+                <span class="tag" style="background: #00bcd4;">Elasticsearch</span>
+            </div>
+        </header>
+
+        <nav>
+            <a href="#overview">Overview</a>
+            <a href="#skill">Skill</a>
+            <a href="#tools">Tools</a>
+            <a href="#agent">Agent</a>
+            <a href="#deployment">Deployment</a>
+            <a href="#integration">Integration</a>
+            <a href="#testing">Testing</a>
+        </nav>
+
+        <div class="content">
+
+            <!-- TABLE OF CONTENTS -->
+            <section id="toc">
+                <h2>📋 Table of Contents</h2>
+                <div class="toc">
+                    <a href="#overview">1. Architecture Overview</a>
+                    <a href="#skill">2. Skill Definition</a>
+                    <a href="#tools">3. Tool Definitions</a>
+                    <a href="#agent">4. Agent Configuration</a>
+                    <a href="#deployment">5. Deployment Commands</a>
+                    <a href="#integration">6. Integration Examples</a>
+                    <a href="#testing">7. Testing & Validation</a>
+                    <a href="#monitoring">8. Monitoring & Metrics</a>
+                    <a href="#summary">9. Component Summary</a>
+                </div>
+            </section>
+
+            <!-- SECTION 1: ARCHITECTURE OVERVIEW -->
+            <section id="overview">
+                <h2>🏗️ Architecture Overview</h2>
+
+                <h3>Component Hierarchy</h3>
+                
+                <div class="architecture-diagram">
+<pre style="color: #34495e;">
+┌─────────────────────────────────────────────────────────────┐
+│                    WATSON ORCHESTRATE                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  AGENT LAYER (agent_v3_llm_aware_fallback.yaml)     │  │
+│  │  • YAVA_Intent_Classifier_Agent                      │  │
+│  │  • LLM: groq/openai/gpt-oss-120b                     │  │
+│  │  • Tools: [classify, listIntents]                    │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                           ↓ invokes                         │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  SKILL LAYER (imported via OpenAPI spec)            │  │
+│  │  • YAVA_Intent_Classifier_V2_Skill                   │  │
+│  │  • Exposes: classify, listIntents as tools           │  │
+│  │  • API: https://yava-intent-v2.onrender.com         │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                           ↓ calls                           │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│               REST API (Deployed on Render)                 │
+├─────────────────────────────────────────────────────────────┤
+│  • api_v2.py (Flask Server)                                 │
+│  • Endpoints: /v2/classify, /v2/intents, /v2/health        │
+│  • Backend: skill_v2.py → classifier_v2.py                  │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│           ELASTICSEARCH + OPENAI (External Services)        │
+├─────────────────────────────────────────────────────────────┤
+│  • Elasticsearch: yava-intent-examples index (kNN search)   │
+│  • OpenAI GPT-4o: LLM reasoning (confidence < 0.75)         │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Key Concepts</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Description</th>
+                            <th>Technology</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>REST API</strong></td>
+                            <td>HTTP endpoints for classification operations</td>
+                            <td>Flask, Python 3.11</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Skill</strong></td>
+                            <td>Registered service in Watson that exposes Tools</td>
+                            <td>OpenAPI 3.0.3 spec</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tool</strong></td>
+                            <td>Individual function exposed by a Skill (e.g., classify)</td>
+                            <td>RESTful operation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Agent</strong></td>
+                            <td>AI entity with LLM that can invoke Tools to accomplish tasks</td>
+                            <td>YAML definition + LLM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backend</strong></td>
+                            <td>Elasticsearch vector store + RAG + LLM hybrid classifier</td>
+                            <td>Elasticsearch 8.x, OpenAI GPT-4o</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECTION 2: SKILL DEFINITION -->
+            <section id="skill">
+                <h2>🎯 Skill Definition</h2>
+
+                <div class="alert info">
+                    <strong>What is a Skill?</strong><br>
+                    A <strong>Skill</strong> is a registered service in Watson Orchestrate that exposes one or more <strong>Tools</strong> via REST API. 
+                    Skills are defined using OpenAPI 3.0.3 specifications and can be discovered and invoked by Agents.
+                </div>
+
+                <h3>V2 Skill Characteristics</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Name</strong></td>
+                            <td><code>YAVA_Intent_Classifier_V2_Skill</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Type</strong></td>
+                            <td>OpenAPI 3.0.3</td>
+                        </tr>
+                        <tr>
+                            <td><strong>API URL</strong></td>
+                            <td><code>https://yava-intent-v2.onrender.com</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backend</strong></td>
+                            <td>Elasticsearch + RAG + OpenAI GPT-4o</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tools Exposed</strong></td>
+                            <td>2 (classify, listIntents)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenAPI Spec</strong></td>
+                            <td><code>openapi_skill_v2.json</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Skill Registration Files</h3>
+
+                <div class="component-card">
+                    <h4>File Structure</h4>
+                    <div class="code-block">
+intent-classifier/
+├── openapi_skill_v2.json     <span class="comment"># OpenAPI 3.0.3 spec (Watson import)</span>
+├── openapi_skill_v2.yaml     <span class="comment"># YAML version (human-readable)</span>
+└── api_v2.py                 <span class="comment"># Flask REST API server</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: TOOL DEFINITIONS -->
+            <section id="tools">
+                <h2>🔧 Tool Definitions</h2>
+
+                <h3>Tool 1: classify (Primary Tool)</h3>
+
+                <div class="component-card">
+                    <h4>Purpose</h4>
+                    <p>Complete intent classification with all NLU features bundled: classification, slot extraction, 
+                    multi-intent detection, disambiguation, and LLM fallback.</p>
+
+                    <h4>Tool Signature</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>operationId</strong></td>
+                                <td><code>classifyIntent</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Method</strong></td>
+                                <td><code>POST</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Endpoint</strong></td>
+                                <td><code>/v2/classify</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Input Parameters</h4>
+                    <div class="code-block">
+{
+  <span class="string">"user_input"</span>: <span class="string">"string (required)"</span>,        <span class="comment">// User's utterance</span>
+  <span class="string">"conversation_id"</span>: <span class="string">"string (optional)"</span>,   <span class="comment">// Session ID for context</span>
+  <span class="string">"member_id"</span>: <span class="string">"string (optional)"</span>,         <span class="comment">// Member identifier</span>
+  <span class="string">"context_aware"</span>: <span class="string">"boolean (default: true)"</span>, <span class="comment">// Use conversation history</span>
+  <span class="string">"force_llm"</span>: <span class="string">"boolean (default: false)"</span>   <span class="comment">// Force LLM invocation</span>
+}
+                    </div>
+
+                    <h4>Output Schema</h4>
+                    <div class="code-block">
+{
+  <span class="comment">// Core Classification</span>
+  <span class="string">"intent"</span>: <span class="string">"string"</span>,                     <span class="comment">// Detected intent name</span>
+  <span class="string">"agent"</span>: <span class="string">"string"</span>,                      <span class="comment">// Target agent (e.g., "PharmacyAgent")</span>
+  <span class="string">"category"</span>: <span class="string">"string"</span>,                   <span class="comment">// Intent category</span>
+  <span class="string">"confidence"</span>: <span class="string">"float (0-1)"</span>,            <span class="comment">// Classification confidence</span>
+  
+  <span class="comment">// V2 Metadata</span>
+  <span class="string">"classification_method"</span>: <span class="string">"RAG-only | RAG+LLM"</span>,
+  <span class="string">"llm_invoked"</span>: <span class="string">"boolean"</span>,
+  <span class="string">"vector_store"</span>: <span class="string">"elasticsearch"</span>,
+  
+  <span class="comment">// LLM Enhancement (if invoked)</span>
+  <span class="string">"llm_reasoning"</span>: <span class="string">"string"</span>,              <span class="comment">// Natural language explanation</span>
+  <span class="string">"llm_confidence"</span>: <span class="string">"float"</span>,
+  <span class="string">"needs_clarification"</span>: <span class="string">"boolean"</span>,
+  
+  <span class="comment">// Entity Extraction</span>
+  <span class="string">"slots"</span>: {},                            <span class="comment">// Extracted entities</span>
+  
+  <span class="comment">// Multi-Intent Detection</span>
+  <span class="string">"has_multi_intents"</span>: <span class="string">"boolean"</span>,
+  <span class="string">"multi_intents"</span>: [
+    {
+      <span class="string">"segment"</span>: <span class="string">"string"</span>,
+      <span class="string">"intent"</span>: <span class="string">"string"</span>,
+      <span class="string">"confidence"</span>: <span class="string">"float"</span>
+    }
+  ],
+  
+  <span class="comment">// Performance Metrics</span>
+  <span class="string">"performance"</span>: {
+    <span class="string">"rag_time_ms"</span>: <span class="string">"float"</span>,
+    <span class="string">"llm_time_ms"</span>: <span class="string">"float"</span>,
+    <span class="string">"llm_cost_usd"</span>: <span class="string">"float"</span>
+  }
+}
+                    </div>
+
+                    <h4>Tool Features (All-in-One)</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Included?</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Intent Classification</td>
+                                <td>✅</td>
+                                <td>Primary intent with confidence</td>
+                            </tr>
+                            <tr>
+                                <td>Slot Extraction</td>
+                                <td>✅</td>
+                                <td>Automatic entity extraction</td>
+                            </tr>
+                            <tr>
+                                <td>Multi-Intent Detection</td>
+                                <td>✅</td>
+                                <td>Compound sentence handling</td>
+                            </tr>
+                            <tr>
+                                <td>Disambiguation</td>
+                                <td>✅</td>
+                                <td>Clarification prompts</td>
+                            </tr>
+                            <tr>
+                                <td>Context Awareness</td>
+                                <td>✅</td>
+                                <td>Session history tracking</td>
+                            </tr>
+                            <tr>
+                                <td>LLM Reasoning</td>
+                                <td>✅</td>
+                                <td>Auto-invoked if confidence < 0.75</td>
+                            </tr>
+                            <tr>
+                                <td>Performance Metrics</td>
+                                <td>✅</td>
+                                <td>Latency & cost tracking</td>
+                            </tr>
+                            <tr>
+                                <td>Agent Routing</td>
+                                <td>✅</td>
+                                <td>Target agent determination</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Tool 2: listIntents (Secondary Tool)</h3>
+
+                <div class="component-card">
+                    <h4>Purpose</h4>
+                    <p>Retrieve intent catalog from Elasticsearch for reference, discovery, and validation.</p>
+
+                    <h4>Tool Signature</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>operationId</strong></td>
+                                <td><code>listIntents</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Method</strong></td>
+                                <td><code>GET</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Endpoint</strong></td>
+                                <td><code>/v2/intents</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Input Parameters</h4>
+                    <p>None (GET request)</p>
+
+                    <h4>Output Schema</h4>
+                    <div class="code-block">
+{
+  <span class="string">"source"</span>: <span class="string">"elasticsearch"</span>,
+  <span class="string">"total_count"</span>: <span class="keyword">47</span>,
+  <span class="string">"categories"</span>: [<span class="string">"pharmacy"</span>, <span class="string">"claims"</span>, <span class="string">"benefits"</span>, ...],
+  <span class="string">"intents"</span>: [
+    {
+      <span class="string">"intent_name"</span>: <span class="string">"prescription_refill"</span>,
+      <span class="string">"category"</span>: <span class="string">"pharmacy"</span>,
+      <span class="string">"example_count"</span>: <span class="keyword">15</span>,
+      <span class="string">"sample_utterance"</span>: <span class="string">"I need to refill my prescription"</span>
+    }
+  ]
+}
+                    </div>
+
+                    <h4>Use Cases</h4>
+                    <ul>
+                        <li>Display available intents to users</li>
+                        <li>Validate intent names for API calls</li>
+                        <li>Show examples for training/debugging</li>
+                        <li>Health check for Elasticsearch index</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SECTION 4: AGENT CONFIGURATION -->
+            <section id="agent">
+                <h2>🤖 Agent Configuration</h2>
+
+                <div class="alert success">
+                    <strong>Agent Definition File:</strong> <code>agent_v3_llm_aware_fallback.yaml</code><br>
+                    This YAML file defines the agent's behavior, LLM model, available tools, and decision-making logic.
+                </div>
+
+                <h3>Agent Specifications</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Name</strong></td>
+                            <td><code>YAVA_Intent_Classifier_V3_RAG_LLM_Fallback</code></td>
+                            <td>Agent identifier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>LLM Model</strong></td>
+                            <td><code>groq/openai/gpt-oss-120b</code></td>
+                            <td>Large language model</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tools Available</strong></td>
+                            <td><code>classifyIntent, listIntents</code></td>
+                            <td>2 tools from skill</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Style</strong></td>
+                            <td><code>default</code></td>
+                            <td>Conversation style</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spec Version</strong></td>
+                            <td><code>v1</code></td>
+                            <td>Watson Orchestrate format</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Agent Instructions (Key Features)</h3>
+
+                <div class="benefit-box">
+                    <h4>1. LLM Availability Detection</h4>
+                    <p>Agent checks if LLM was invoked by the classifier tool:</p>
+                    <div class="code-block">
+<span class="keyword">if</span> (llm_invoked == <span class="keyword">false</span> AND confidence < <span class="keyword">0.75</span>):
+    <span class="comment"># LLM unavailable - Agent applies manual reasoning</span>
+                    </div>
+                </div>
+
+                <div class="benefit-box">
+                    <h4>2. Manual Reasoning Protocol</h4>
+                    <p>When backend LLM is unavailable, agent provides reasoning enhancement:</p>
+                    <ul>
+                        <li>Analyze utterance for healthcare keywords</li>
+                        <li>Check conversation context</li>
+                        <li>Apply domain-specific rules</li>
+                        <li>Boost confidence if patterns are clear</li>
+                        <li>Generate clarification prompts if needed</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-box">
+                    <h4>3. Response Strategy by Confidence</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Confidence Range</th>
+                                <th>LLM Available</th>
+                                <th>LLM Unavailable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>HIGH (≥ 0.75)</strong></td>
+                                <td>Report confidently</td>
+                                <td>Report confidently</td>
+                            </tr>
+                            <tr>
+                                <td><strong>MEDIUM (0.60-0.74)</strong></td>
+                                <td>Trust LLM reasoning</td>
+                                <td>Apply manual reasoning</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LOW (< 0.60)</strong></td>
+                                <td>Ask clarifying questions</td>
+                                <td>Ask clarifying questions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Conversation Starters</h3>
+                <ul>
+                    <li>"I need help with my prescription"</li>
+                    <li>"Check my claim status"</li>
+                    <li>"What is my deductible?"</li>
+                    <li>"Find a doctor near me"</li>
+                    <li>"What intents can you classify?"</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 5: DEPLOYMENT COMMANDS -->
+            <section id="deployment">
+                <h2>🚀 Deployment Commands</h2>
+
+                <h3>Step 1: Deploy REST API to Render</h3>
+
+                <div class="command-box">
+<span class="comment"># Navigate to project directory</span>
+cd c:\Aetna\YAVA\Agents\Architecture\Reference\Agent-Determination\intent-classifier
+
+<span class="comment"># Commit to Git</span>
+git add .
+git commit -m "Deploy V2 Elasticsearch classifier"
+git push origin main
+                </div>
+
+                <div class="alert warning">
+                    <strong>⚠️ Render Dashboard Configuration:</strong><br>
+                    After pushing to GitHub, configure on Render dashboard:
+                    <ol style="margin-top: 10px;">
+                        <li>Go to <a href="https://render.com/dashboard" target="_blank">render.com/dashboard</a></li>
+                        <li>Click <strong>New +</strong> → <strong>Web Service</strong></li>
+                        <li>Connect GitHub repository</li>
+                        <li>Render auto-detects <code>render.yaml</code></li>
+                        <li>Set environment variables</li>
+                        <li>Click <strong>Create Web Service</strong></li>
+                    </ol>
+                </div>
+
+                <h4>Environment Variables (Set in Render Dashboard)</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ELASTICSEARCH_HOST</code></td>
+                            <td><code>https://your-cluster.com:9200</code></td>
+                            <td>ES cluster URL</td>
+                        </tr>
+                        <tr>
+                            <td><code>ELASTICSEARCH_USERNAME</code></td>
+                            <td><code>elastic</code></td>
+                            <td>ES username</td>
+                        </tr>
+                        <tr>
+                            <td><code>ELASTICSEARCH_PASSWORD</code></td>
+                            <td><code>your-secure-password</code></td>
+                            <td>ES password</td>
+                        </tr>
+                        <tr>
+                            <td><code>OPENAI_API_KEY</code></td>
+                            <td><code>sk-proj-...</code></td>
+                            <td>OpenAI API key</td>
+                        </tr>
+                        <tr>
+                            <td><code>LLM_THRESHOLD</code></td>
+                            <td><code>0.75</code></td>
+                            <td>Confidence threshold</td>
+                        </tr>
+                        <tr>
+                            <td><code>ENABLE_LLM</code></td>
+                            <td><code>true</code></td>
+                            <td>Enable LLM features</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="flow-box">
+                    <strong>✅ Expected Render Service:</strong>
+                    <ul>
+                        <li><strong>Name:</strong> <code>yava-intent-classifier-v2-api</code></li>
+                        <li><strong>URL:</strong> <code>https://yava-intent-v2.onrender.com</code></li>
+                        <li><strong>Health Check:</strong> <code>https://yava-intent-v2.onrender.com/v2/health</code></li>
+                    </ul>
+                </div>
+
+                <h3>Step 2: Import Skill to Watson Orchestrate</h3>
+
+                <div class="command-box">
+<span class="comment"># Login to Watson Orchestrate</span>
+orchestrate login --region us-south
+
+<span class="comment"># Import skill using OpenAPI spec</span>
+orchestrate skills import \
+  -f openapi_skill_v2.json \
+  --name "YAVA_Intent_Classifier_V2_Skill" \
+  --api-url "https://yava-intent-v2.onrender.com"
+
+<span class="comment"># Verify import</span>
+orchestrate skills list | grep YAVA
+                </div>
+
+                <h4>Command Parameters</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flag</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>-f</code></td>
+                            <td><code>openapi_skill_v2.json</code></td>
+                            <td>OpenAPI spec file path</td>
+                        </tr>
+                        <tr>
+                            <td><code>--name</code></td>
+                            <td><code>YAVA_Intent_Classifier_V2_Skill</code></td>
+                            <td>Skill name in Watson</td>
+                        </tr>
+                        <tr>
+                            <td><code>--api-url</code></td>
+                            <td><code>https://yava-intent-v2.onrender.com</code></td>
+                            <td>Deployed API base URL</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Step 3: Create Agent</h3>
+
+                <div class="command-box">
+<span class="comment"># Import agent definition</span>
+orchestrate agents import -f agent_v3_llm_aware_fallback.yaml
+
+<span class="comment"># Verify agent creation</span>
+orchestrate agents list | grep YAVA
+                </div>
+
+                <div class="flow-box">
+                    <strong>✅ What Happens:</strong>
+                    <ol>
+                        <li>Watson creates agent with specified LLM (<code>groq/openai/gpt-oss-120b</code>)</li>
+                        <li>Agent has access to tools: <code>classifyIntent</code>, <code>listIntents</code></li>
+                        <li>Agent follows instructions in YAML</li>
+                        <li>Ready for user interactions</li>
+                    </ol>
+                </div>
+
+                <h3>Step 4: Test Agent</h3>
+
+                <div class="command-box">
+<span class="comment"># Test agent interactively</span>
+orchestrate agents chat YAVA_Intent_Classifier_V3_RAG_LLM_Fallback
+
+<span class="comment"># Example conversation:</span>
+User: "I need to refill my prescription"
+Agent: [calls classifyIntent]
+Agent: "✓ Intent identified: Pharmacy (92% confidence). Routing to PharmacyAgent."
+                </div>
+            </section>
+
+            <!-- SECTION 6: INTEGRATION EXAMPLES -->
+            <section id="integration">
+                <h2>🔗 Integration Examples</h2>
+
+                <h3>Example 1: Simple Classification (High Confidence)</h3>
+
+                <div class="flow-box">
+                    <h4>Execution Flow</h4>
+                    <div class="code-block">
+<span class="keyword">User Input:</span> <span class="string">"I need to refill my Lipitor prescription"</span>
+     ↓
+<span class="keyword">Agent LLM:</span> Thought: "I should classify this user request"
+            Decision: "Call classifyIntent tool"
+     ↓
+<span class="keyword">Tool Invocation:</span>
+  POST https://yava-intent-v2.onrender.com/v2/classify
+  Body: {
+    <span class="string">"user_input"</span>: <span class="string">"I need to refill my Lipitor prescription"</span>,
+    <span class="string">"conversation_id"</span>: <span class="string">"session-12345"</span>
+  }
+     ↓
+<span class="keyword">Skill Response:</span>
+  {
+    <span class="string">"intent"</span>: <span class="string">"prescription_refill"</span>,
+    <span class="string">"agent"</span>: <span class="string">"PharmacyAgent"</span>,
+    <span class="string">"confidence"</span>: <span class="keyword">0.92</span>,
+    <span class="string">"classification_method"</span>: <span class="string">"RAG-only"</span>,
+    <span class="string">"llm_invoked"</span>: <span class="keyword">false</span>,
+    <span class="string">"slots"</span>: {
+      <span class="string">"medication_name"</span>: <span class="string">"Lipitor"</span>
+    }
+  }
+     ↓
+<span class="keyword">Agent Response:</span> "I can help you refill your Lipitor prescription. 
+                   Let me connect you to the Pharmacy Agent."
+                    </div>
+                </div>
+
+                <h3>Example 2: Low Confidence with LLM Enhancement</h3>
+
+                <div class="flow-box">
+                    <h4>Execution Flow</h4>
+                    <div class="code-block">
+<span class="keyword">User Input:</span> <span class="string">"Can I use my FSA for that specialist visit?"</span>
+     ↓
+<span class="keyword">Tool Call:</span> classifyIntent
+     ↓
+<span class="keyword">Classifier Internal Flow:</span>
+  <span class="comment">STAGE 1: Elasticsearch RAG</span>
+    - Query embedding generated
+    - kNN search: top_match_score = 0.68
+    - Intent: "hsa" (confidence: 0.68)
+    - Decision: confidence < 0.75 → Invoke LLM
+  
+  <span class="comment">STAGE 2: OpenAI GPT-4o Reasoning</span>
+    - Context: "User asks about FSA (Flexible Spending Account)"
+    - Domain rule: "FSA questions map to 'hsa' intent"
+    - LLM confidence: 0.87
+     ↓
+<span class="keyword">Skill Response:</span>
+  {
+    <span class="string">"intent"</span>: <span class="string">"hsa"</span>,
+    <span class="string">"confidence"</span>: <span class="keyword">0.87</span>,
+    <span class="string">"classification_method"</span>: <span class="string">"RAG+LLM"</span>,
+    <span class="string">"llm_invoked"</span>: <span class="keyword">true</span>,
+    <span class="string">"llm_reasoning"</span>: <span class="string">"User asks about FSA eligible expenses"</span>,
+    <span class="string">"performance"</span>: {
+      <span class="string">"llm_time_ms"</span>: <span class="keyword">850.3</span>,
+      <span class="string">"llm_cost_usd"</span>: <span class="keyword">0.0123</span>
+    }
+  }
+                    </div>
+                </div>
+
+                <h3>Example 3: Multi-Intent Detection</h3>
+
+                <div class="flow-box">
+                    <h4>Execution Flow</h4>
+                    <div class="code-block">
+<span class="keyword">User Input:</span> <span class="string">"I need to refill my prescription and also check my claim status"</span>
+     ↓
+<span class="keyword">Skill Response:</span>
+  {
+    <span class="string">"intent"</span>: <span class="string">"prescription_refill"</span>,
+    <span class="string">"confidence"</span>: <span class="keyword">0.85</span>,
+    <span class="string">"has_multi_intents"</span>: <span class="keyword">true</span>,
+    <span class="string">"multi_intents"</span>: [
+      {
+        <span class="string">"segment"</span>: <span class="string">"refill my prescription"</span>,
+        <span class="string">"intent"</span>: <span class="string">"prescription_refill"</span>,
+        <span class="string">"agent"</span>: <span class="string">"PharmacyAgent"</span>
+      },
+      {
+        <span class="string">"segment"</span>: <span class="string">"check my claim status"</span>,
+        <span class="string">"intent"</span>: <span class="string">"check_claim_status"</span>,
+        <span class="string">"agent"</span>: <span class="string">"ClaimsAgent"</span>
+      }
+    ]
+  }
+     ↓
+<span class="keyword">Agent Response:</span> "I detected two requests:
+                   1. Prescription refill (PharmacyAgent)
+                   2. Check claim status (ClaimsAgent)
+                   Which would you like to handle first?"
+                    </div>
+                </div>
+
+                <h3>Example 4: Disambiguation Needed</h3>
+
+                <div class="flow-box">
+                    <h4>Execution Flow</h4>
+                    <div class="code-block">
+<span class="keyword">User Input:</span> <span class="string">"I have a question about my prescription"</span>
+     ↓
+<span class="keyword">Skill Response:</span>
+  {
+    <span class="string">"intent"</span>: <span class="string">"prescription_general"</span>,
+    <span class="string">"confidence"</span>: <span class="keyword">0.68</span>,
+    <span class="string">"needs_disambiguation"</span>: <span class="keyword">true</span>,
+    <span class="string">"disambiguation"</span>: {
+      <span class="string">"options"</span>: [
+        {<span class="string">"option_number"</span>: <span class="keyword">1</span>, <span class="string">"intent"</span>: <span class="string">"prescription_refill"</span>},
+        {<span class="string">"option_number"</span>: <span class="keyword">2</span>, <span class="string">"intent"</span>: <span class="string">"prescription_status"</span>},
+        {<span class="string">"option_number"</span>: <span class="keyword">3</span>, <span class="string">"intent"</span>: <span class="string">"prescription_cost"</span>}
+      ]
+    }
+  }
+     ↓
+<span class="keyword">Agent Response:</span> "I need clarification. Are you asking about:
+                   1. Refilling a prescription
+                   2. Checking prescription status
+                   3. Checking medication costs"
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: TESTING -->
+            <section id="testing">
+                <h2>✅ Testing & Validation</h2>
+
+                <h3>Test 1: Health Check</h3>
+
+                <div class="command-box">
+<span class="comment"># Verify API is running</span>
+curl https://yava-intent-v2.onrender.com/v2/health
+
+<span class="comment"># Expected response:</span>
+{
+  <span class="string">"status"</span>: <span class="string">"healthy"</span>,
+  <span class="string">"service"</span>: <span class="string">"yava-intent-classifier-v2"</span>,
+  <span class="string">"elasticsearch_connected"</span>: <span class="keyword">true</span>,
+  <span class="string">"document_count"</span>: <span class="keyword">700</span>
+}
+                </div>
+
+                <h3>Test 2: Direct API Call</h3>
+
+                <div class="command-box">
+<span class="comment"># Test classify endpoint directly</span>
+curl -X POST https://yava-intent-v2.onrender.com/v2/classify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_input": "I need to refill my prescription",
+    "conversation_id": "test-001"
+  }'
+                </div>
+
+                <h3>Test 3: List Intents</h3>
+
+                <div class="command-box">
+<span class="comment"># Get intent catalog</span>
+curl https://yava-intent-v2.onrender.com/v2/intents
+                </div>
+
+                <h3>Test 4: Agent Interaction</h3>
+
+                <div class="command-box">
+<span class="comment"># Chat with agent</span>
+orchestrate agents chat YAVA_Intent_Classifier_V3_RAG_LLM_Fallback
+
+<span class="comment"># Test cases:</span>
+1. "I need a prescription refill" → Should classify as pharmacy
+2. "Check my claim status" → Should classify as claims
+3. "What can you help me with?" → Should call listIntents tool
+                </div>
+            </section>
+
+            <!-- SECTION 8: MONITORING -->
+            <section id="monitoring">
+                <h2>📊 Monitoring & Metrics</h2>
+
+                <h3>Classification Performance Metrics</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Target Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RAG-only percentage</td>
+                            <td>~80%</td>
+                            <td>Queries handled without LLM</td>
+                        </tr>
+                        <tr>
+                            <td>LLM invocation rate</td>
+                            <td>~20%</td>
+                            <td>Queries requiring LLM reasoning</td>
+                        </tr>
+                        <tr>
+                            <td>Average RAG latency</td>
+                            <td>15-25ms</td>
+                            <td>Elasticsearch kNN search time</td>
+                        </tr>
+                        <tr>
+                            <td>Average LLM latency</td>
+                            <td>700-1200ms</td>
+                            <td>GPT-4o API call time</td>
+                        </tr>
+                        <tr>
+                            <td>LLM agreement rate</td>
+                            <td>>80%</td>
+                            <td>RAG and LLM intent consensus</td>
+                        </tr>
+                        <tr>
+                            <td>Average cost per query</td>
+                            <td>$0.001-0.002</td>
+                            <td>OpenAI API cost</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Cost Analysis (10,000 queries/day)</h3>
+
+                <div class="decision-box">
+                    <h4>💰 Monthly Cost Breakdown</h4>
+                    <ul>
+                        <li><strong>Render Web Service:</strong> $7/month (Starter tier)</li>
+                        <li><strong>Elasticsearch Cloud:</strong> $95/month (8GB deployment)</li>
+                        <li><strong>OpenAI API:</strong> $200/month (2,000 LLM calls/day @ $0.003/call)</li>
+                        <li><strong>Total:</strong> <strong>~$302/month</strong></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SECTION 9: SUMMARY -->
+            <section id="summary">
+                <h2>🎯 Component Summary</h2>
+
+                <h3>Skill → Tool → Agent Associations</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th>Association</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>API Service</strong></td>
+                            <td>REST API</td>
+                            <td><code>api_v2.py</code></td>
+                            <td>Deployed at <code>https://yava-intent-v2.onrender.com</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Skill</strong></td>
+                            <td>Watson Skill</td>
+                            <td><code>YAVA_Intent_Classifier_V2_Skill</code></td>
+                            <td>Imported from <code>openapi_skill_v2.json</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tool 1</strong></td>
+                            <td>Watson Tool</td>
+                            <td><code>classifyIntent</code></td>
+                            <td>Exposed by Skill → Calls <code>/v2/classify</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tool 2</strong></td>
+                            <td>Watson Tool</td>
+                            <td><code>listIntents</code></td>
+                            <td>Exposed by Skill → Calls <code>/v2/intents</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Agent</strong></td>
+                            <td>Watson Agent</td>
+                            <td><code>YAVA_Intent_Classifier_V3</code></td>
+                            <td>Uses LLM + has access to both tools</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Data Flow Diagram</h3>
+
+                <div class="architecture-diagram">
+<pre style="color: #34495e;">
+User Message
+    ↓
+Watson Agent (LLM: groq/openai/gpt-oss-120b)
+    ↓ decides to invoke
+Tool: classifyIntent
+    ↓ calls
+Skill: YAVA_Intent_Classifier_V2_Skill
+    ↓ HTTP POST
+API: https://yava-intent-v2.onrender.com/v2/classify
+    ↓ backend
+classifier_v2.py (Elasticsearch RAG + OpenAI LLM)
+    ↓ returns
+Classification Result
+    ↓ interprets
+Agent
+    ↓ responds
+User
+</pre>
+                </div>
+
+                <h3>File Reference</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Purpose</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>openapi_skill_v2.json</code></td>
+                            <td>OpenAPI spec for Watson import</td>
+                            <td>Root directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>openapi_skill_v2.yaml</code></td>
+                            <td>YAML version (human-readable)</td>
+                            <td>Root directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>api_v2.py</code></td>
+                            <td>Flask REST API server</td>
+                            <td>Root directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>render.yaml</code></td>
+                            <td>Render deployment config</td>
+                            <td>Root directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>agent_v3_llm_aware_fallback.yaml</code></td>
+                            <td>Agent definition</td>
+                            <td>Root directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>src/skill_v2.py</code></td>
+                            <td>Skill interface functions</td>
+                            <td>src/ directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>src/classifier_v2.py</code></td>
+                            <td>Core classification engine</td>
+                            <td>src/ directory</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- FOOTER -->
+            <section style="background: #f8f9fa; padding: 30px; margin-top: 50px; border-radius: 8px; text-align: center;">
+                <h2 style="border: none; padding: 0;">🎉 Deployment Complete!</h2>
+                <p style="margin: 20px 0;">
+                    Your V2 Elasticsearch-backed intent classifier is now fully integrated with Watson Orchestrate!
+                </p>
+                <div class="alert success" style="text-align: left;">
+                    <strong>Next Steps:</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Test agent with real user queries</li>
+                        <li>Monitor Render logs for performance</li>
+                        <li>Check Elasticsearch index stats</li>
+                        <li>Review OpenAI usage and costs</li>
+                        <li>Scale Elasticsearch cluster as needed</li>
+                    </ol>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</body>
+</html>
